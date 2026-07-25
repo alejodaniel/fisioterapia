@@ -137,3 +137,17 @@ Interfaz de usuario web interactiva que solicita permisos de cámara web, envía
    *(O alternativamente: `ng serve`)*
 5. Abre en tu navegador favorito:
    👉 **`http://localhost:4200`**
+
+---
+
+## 🔑 Credenciales de Acceso por Defecto
+
+Al iniciar el Backend de Spring Boot, se crearán automáticamente los siguientes usuarios de prueba en tu base de datos (definidos en [BackendApplication.java](file:///c:/Users/alejo/OneDrive/Desktop/UNIBE%20EJERCICIOS/ALGREBRA%20LINEAL/fisioterapia/backend/fisioterapia-backend-services/src/main/java/com/fisio/backend/BackendApplication.java)):
+
+### 1. Rol Paciente
+* **Correo/Usuario:** `paciente@fisioterapia.com`
+* **Contraseña:** `password123`
+
+### 2. Rol Médico
+* **Correo/Usuario:** `medico@fisioterapia.com`
+* **Contraseña:** `password123`
