@@ -1,0 +1,11 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // Exponemos el módulo vo transitivamente para que services lo consuma
+    api project(':fisioterapia-backend-vo')
+
+    // Exponemos JPA transitivamente para que services tenga acceso a anotaciones y entidades
+    api 'org.springframework.boot:spring-boot-starter-data-jpa'
+}

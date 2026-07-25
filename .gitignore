@@ -1,0 +1,93 @@
+# ==========================================
+# Root .gitignore for Fisioterapia Project
+# Supports: Java/Gradle, Angular/Node, Python, IDEs, and OS Files
+# ==========================================
+
+# ------------------------------------------
+# IDEs and Editors
+# ------------------------------------------
+.idea/
+.vscode/
+.history/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*~
+*.launch
+.settings/
+.classpath
+.project
+.factorypath
+.apt_generated
+.springBeans
+.sts4-cache
+
+# ------------------------------------------
+# OS / System files
+# ------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+
+# ------------------------------------------
+# Node / Angular / Frontend
+# ------------------------------------------
+**/node_modules/
+**/dist/
+**/tmp/
+**/out-tsc/
+**/.angular/
+**/.sass-cache/
+**/connect.lock
+**/coverage/
+**/libpeerconnection.log
+*debug.log
+*error.log
+yarn-error.log
+
+# ------------------------------------------
+# Java / Gradle / Backend
+# ------------------------------------------
+**/.gradle/
+**/build/
+**/target/
+**/bin/
+**/out/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# ------------------------------------------
+# Python
+# ------------------------------------------
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.env/
+venv.bak/
+ENV.bak/
+.venv/
+
+# ------------------------------------------
+# Configuration and Environment Secrets
+# ------------------------------------------
+.env
+.env.local
+.env.*.local
+*.private

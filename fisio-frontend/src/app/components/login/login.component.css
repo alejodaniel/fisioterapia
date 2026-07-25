@@ -1,0 +1,235 @@
+/* Contenedor principal con fondo suave gris azulado */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f3f6f9;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Tarjeta de login */
+.login-card {
+  background: #ffffff;
+  padding: 40px 35px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(160, 175, 195, 0.15);
+  width: 100%;
+  max-width: 440px;
+  border: 1px solid #e1e8ed;
+  box-sizing: border-box;
+}
+
+/* Branding de FisioSmart */
+.brand {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.brand-icon {
+  font-size: 48px;
+  color: #2b6cb0; /* Azul médico corporativo */
+  margin-bottom: 8px;
+}
+
+.brand h2 {
+  margin: 0;
+  font-size: 26px;
+  color: #1a202c;
+  font-weight: 600;
+}
+
+.brand p {
+  margin: 5px 0 0 0;
+  font-size: 14px;
+  color: #718096;
+}
+
+/* Grupos del formulario */
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 7px;
+}
+
+/* Input con iconos integrados */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  color: #a0aec0;
+  font-size: 20px;
+  pointer-events: none;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 12px 12px 12px 42px;
+  font-size: 14.5px;
+  border: 1.5px solid #cbd5e0;
+  border-radius: 8px;
+  outline: none;
+  background-color: #fafbfc;
+  color: #2d3748;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.input-wrapper input:focus {
+  border-color: #3182ce;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+}
+
+/* Selector de Roles */
+.role-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 5px;
+}
+
+.role-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border: 1.5px solid #cbd5e0;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #fafbfc;
+  transition: all 0.25s ease;
+}
+
+.role-option input {
+  display: none;
+}
+
+.role-option .material-icons {
+  font-size: 24px;
+  color: #a0aec0;
+  margin-bottom: 6px;
+}
+
+.role-option span:last-child {
+  font-size: 13px;
+  font-weight: 600;
+  color: #718096;
+}
+
+.role-option.active {
+  border-color: #3182ce;
+  background-color: rgba(66, 153, 225, 0.05);
+}
+
+.role-option.active .material-icons {
+  color: #3182ce;
+}
+
+.role-option.active span:last-child {
+  color: #2b6cb0;
+}
+
+/* Botón de envío */
+.submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 13px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #3182ce;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-top: 25px;
+  box-sizing: border-box;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: #2b6cb0;
+}
+
+.submit-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.submit-btn:disabled {
+  background-color: #cbd5e0;
+  color: #718096;
+  cursor: not-allowed;
+}
+
+.submit-btn .material-icons {
+  font-size: 18px;
+  margin-left: 8px;
+}
+
+/* Alertas de error/éxito */
+.error-alert, .success-alert {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 13px;
+}
+
+.error-alert {
+  background-color: #fff5f5;
+  border: 1px solid #fed7d7;
+  color: #c53030;
+}
+
+.success-alert {
+  background-color: #f0fff4;
+  border: 1px solid #c6f6d5;
+  color: #22543d;
+}
+
+.error-alert .material-icons, .success-alert .material-icons {
+  font-size: 18px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.alert-text {
+  text-align: left;
+}
+
+/* Alternancia de modo (Login/Registro) */
+.toggle-mode {
+  margin-top: 25px;
+  font-size: 13px;
+  color: #718096;
+}
+
+.toggle-mode a {
+  color: #3182ce;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.toggle-mode a:hover {
+  text-decoration: underline;
+  color: #2b6cb0;
+}

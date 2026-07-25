@@ -1,0 +1,118 @@
+<div class="therapy-container">
+  <!-- Navigation Header Bar -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="material-icons">health_and_safety</span>
+      <span>FisioSmart</span>
+    </div>
+    <div class="nav-actions">
+      <a routerLink="/dashboard" class="back-link" *ngIf="!isSessionActive">
+        <span class="material-icons">arrow_back</span>
+        <span>Volver al Dashboard</span>
+      </a>
+      <span class="session-badge" *ngIf="isSessionActive">
+        <span class="pulse-dot"></span>
+        Sesión en Vivo
+      </span>
+    </div>
+  </nav>
+
+  <!-- Live Session alerts -->
+  <div class="alert-success-modal" *ngIf="successMessage">
+    <div class="alert-content">
+      <span class="material-icons loading-spinner" *ngIf="successMessage.includes('Guardando')">sync</span>
+      <span class="material-icons success-icon" *ngIf="!successMessage.includes('Guardando')">check_circle</span>
+      <p>{{ successMessage }}</p>
+    </div>
+  </div>
+
+  <main class="therapy-content">
+    <div class="therapy-grid">
+      
+      <!-- Left Column: Camera Feed -->
+      <div class="camera-panel">
+        <div class="exercise-selector-card" *ngIf="!isSessionActive">
+          <label for="exercise-select">Selecciona el Ejercicio a Realizar:</label>
+          <div class="select-wrapper">
+            <span class="material-icons select-icon">fitness_center</span>
+            <select id="exercise-select" [(ngModel)]="selectedExerciseId" (change)="onExerciseChange()">
+              <option *ngFor="let ex of exercises" [value]="ex.id">{{ ex.nombre }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="video-wrapper" [class.error-border]="hasPostureError" [class.active-border]="isSessionActive && !hasPostureError">
+          <video #videoElement id="videoElement" autoplay playsinline></video>
+          
+          <div class="camera-placeholder" *ngIf="!isSessionActive">
+            <span class="material-icons camera-icon">videocam_off</span>
+            <p>La cámara web está apagada</p>
+            <p class="subtitle">Seleccione un ejercicio arriba y presione "Iniciar Cámara" para comenzar.</p>
+          </div>
+
+          <div class="error-overlay" *ngIf="isSessionActive && hasPostureError">
+            <span class="material-icons">warning</span>
+            <span>¡POSTURA INCORRECTA!</span>
+          </div>
+        </div>
+
+        <!-- Real-time Feedback Banner -->
+        <div class="feedback-banner" [class.banner-error]="hasPostureError" [class.banner-active]="isSessionActive && !hasPostureError">
+          <span class="material-icons">info</span>
+          <p class="feedback-text">{{ feedbackMessage }}</p>
+        </div>
+      </div>
+
+      <!-- Right Column: Live Counters & Instructions -->
+      <div class="stats-panel">
+        <div class="counters-grid">
+          <!-- Successful Reps Counter -->
+          <div class="counter-card card-blue">
+            <h3>Repeticiones</h3>
+            <p class="counter-value">{{ repsCount }}</p>
+            <span class="counter-label">Correctas</span>
+          </div>
+
+          <!-- Posture Errors Counter -->
+          <div class="counter-card card-red">
+            <h3>Errores</h3>
+            <p class="counter-value">{{ errorsCount }}</p>
+            <span class="counter-label">Postura Deficiente</span>
+          </div>
+        </div>
+
+        <!-- Action Control Buttons -->
+        <div class="control-actions">
+          <button class="btn btn-start" *ngIf="!isSessionActive" (click)="startTherapy()">
+            <span class="material-icons">play_arrow</span>
+            <span>Iniciar Terapia</span>
+          </button>
+          
+          <button class="btn btn-stop" *ngIf="isSessionActive" (click)="stopAndSaveTherapy()">
+            <span class="material-icons">stop</span>
+            <span>Finalizar y Guardar</span>
+          </button>
+        </div>
+
+        <!-- Selected Exercise Information Guide -->
+        <div class="instruction-card" *ngIf="selectedExerciseId">
+          <div class="instruction-header">
+            <span class="material-icons">assignment</span>
+            <h4>Guía de Ejecución Técnica</h4>
+          </div>
+          <div class="instruction-body" *ngFor="let ex of exercises">
+            <div *ngIf="ex.id == selectedExerciseId">
+              <h5 class="ex-title">{{ ex.nombre }}</h5>
+              <p class="ex-description">{{ ex.descripcion }}</p>
+              <div class="target-box">
+                <span class="material-icons">adjust</span>
+                <span>Rango Angular Objetivo: <strong>{{ ex.anguloObjetivo }}°</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>

@@ -1,0 +1,172 @@
+<div class="dashboard-container">
+  <!-- Navigation Header Bar -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="material-icons">health_and_safety</span>
+      <span>FisioSmart</span>
+    </div>
+    <div class="nav-user">
+      <span class="user-name">{{ currentUser?.nombre }}</span>
+      <span class="user-role" [class.doctor-role]="isDoctor">{{ isDoctor ? 'Fisioterapeuta' : 'Paciente' }}</span>
+      <button class="logout-btn" (click)="logout()">
+        <span class="material-icons">logout</span>
+        <span>Salir</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Dashboard -->
+  <main class="dashboard-content">
+    
+    <!-- Top Welcome & Actions Grid -->
+    <div class="dashboard-grid-top">
+      <div class="welcome-card">
+        <h2>Hola, {{ currentUser?.nombre }}</h2>
+        <p *ngIf="!isDoctor">Bienvenido a tu portal de recuperación. Selecciona una acción para continuar.</p>
+        <p *ngIf="isDoctor">Portal del especialista médico. Supervise el avance de sus pacientes y gestione la base de ejercicios.</p>
+        
+        <div class="action-buttons" *ngIf="!isDoctor">
+          <a routerLink="/therapy" class="btn btn-primary">
+            <span class="material-icons">videocam</span>
+            <span>Comenzar Nueva Terapia</span>
+          </a>
+        </div>
+
+        <div class="patient-selector" *ngIf="isDoctor">
+          <label for="patient-select">Seleccionar Paciente para Monitorear:</label>
+          <div class="select-wrapper">
+            <span class="material-icons select-icon">person</span>
+            <select id="patient-select" [(ngModel)]="selectedPatientId" (change)="onPatientChange()">
+              <option *ngFor="let p of patientsList" [value]="p.id">{{ p.nombre }} ({{ p.correo }})</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Summary cards -->
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-icon icon-blue">
+            <span class="material-icons">calendar_today</span>
+          </div>
+          <div class="stat-info">
+            <h3>Sesiones</h3>
+            <p class="stat-value">{{ totalSessions }}</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-green">
+            <span class="material-icons">task_alt</span>
+          </div>
+          <div class="stat-info">
+            <h3>Repeticiones</h3>
+            <p class="stat-value">{{ totalReps }}</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-red">
+            <span class="material-icons">warning_amber</span>
+          </div>
+          <div class="stat-info">
+            <h3>Posturas Incorrectas</h3>
+            <p class="stat-value">{{ totalErrors }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Middle Panel: Charts & Exercises -->
+    <div class="dashboard-grid-middle">
+      
+      <!-- Chart section (History progress) -->
+      <div class="card chart-card">
+        <div class="card-header">
+          <h3>Evolución Clínica de Sesiones</h3>
+          <span class="subtitle" *ngIf="isDoctor">Visualizando historial de: {{ selectedPatientName }}</span>
+          <span class="subtitle" *ngIf="!isDoctor">Tu progreso a lo largo de las sesiones</span>
+        </div>
+        <div class="card-body">
+          <div class="chart-wrapper">
+            <canvas #chartCanvas></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exercise List & New Exercise form -->
+      <div class="card exercises-card">
+        <div class="card-header">
+          <h3>Catálogo de Ejercicios</h3>
+          <span class="subtitle">Ejercicios disponibles en la plataforma</span>
+        </div>
+        <div class="card-body exercises-list">
+          <div class="exercise-item" *ngFor="let ex of exercises">
+            <div class="exercise-info">
+              <h4>{{ ex.nombre }}</h4>
+              <p>{{ ex.descripcion }}</p>
+            </div>
+            <div class="exercise-angle">
+              <span class="angle-badge">{{ ex.anguloObjetivo }}°</span>
+              <span class="angle-label">Objetivo</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Exercise Panel (Doctor only) -->
+        <div class="doctor-panel" *ngIf="isDoctor">
+          <h4>Crear Nuevo Ejercicio</h4>
+          <form (ngSubmit)="onCreateExercise()">
+            <div class="form-group-sub">
+              <input type="text" name="exName" [(ngModel)]="newExerciseName" placeholder="Nombre (Ej. Rotación Cervical)" required>
+            </div>
+            <div class="form-group-sub">
+              <textarea name="exDesc" [(ngModel)]="newExerciseDescription" placeholder="Descripción física del ejercicio..." required></textarea>
+            </div>
+            <div class="form-group-sub flex-row">
+              <label for="target-angle">Ángulo Objetivo:</label>
+              <input type="number" id="target-angle" name="exAngle" [(ngModel)]="newExerciseTargetAngle" min="10" max="180" required>
+            </div>
+            <button type="submit" class="btn btn-secondary" [disabled]="!newExerciseName || !newExerciseDescription">
+              <span class="material-icons">add</span>
+              <span>Guardar Ejercicio</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Panel: Detailed session table -->
+    <div class="card history-card">
+      <div class="card-header">
+        <h3>Historial Detallado de Sesiones</h3>
+        <span class="subtitle">Registros médicos guardados en el servidor</span>
+      </div>
+      <div class="card-body table-responsive">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Fecha y Hora</th>
+              <th>Ejercicio</th>
+              <th>Repeticiones Exitosas</th>
+              <th>Posturas Incorrectas</th>
+              <th>Observaciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of sessions">
+              <td>{{ s.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td class="font-bold">{{ s.ejercicio.nombre }}</td>
+              <td class="text-center text-blue font-bold">{{ s.repeticionesExitosas }}</td>
+              <td class="text-center text-red font-bold">{{ s.erroresCometidos }}</td>
+              <td>{{ s.observaciones || 'Sin observaciones' }}</td>
+            </tr>
+            <tr *ngIf="sessions.length === 0">
+              <td colspan="5" class="text-center no-data">No hay registros de terapia guardados en esta cuenta.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
