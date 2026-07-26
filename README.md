@@ -1,17 +1,8 @@
-# 🏋️‍♂️ Proyecto Fisioterapia - Guía de Levantamiento
+#  Proyecto Fisioterapia - Guía de Levantamiento
 
 Este repositorio contiene un sistema completo de fisioterapia con análisis de postura en tiempo real utilizando inteligencia artificial.
 
-## 📐 Arquitectura y Puertos del Sistema
-
-El sistema está dividido en tres componentes principales que interactúan entre sí:
-
-```mermaid
-graph TD
-    A[Frontend: Angular - Puerto 4200] -->|HTTP / JSON| B[Backend: Spring Boot - Puerto 8080]
-    A -->|WebSockets / Base64 Frames| C[AI Server: Python - Puerto 5000]
-    B -->|JPA / JDBC| D[(Base de Datos: PostgreSQL - Puerto 5432)]
-```
+##  Arquitectura y Puertos del Sistema
 
 * **Frontend (Angular 17):** `http://localhost:4200`
 * **Backend (Spring Boot 4 / Java 25):** `http://localhost:8080`
@@ -20,7 +11,7 @@ graph TD
 
 ---
 
-## 🛠️ Requisitos Previos Generales
+##  Requisitos Previos Generales
 
 Antes de empezar, asegúrate de tener instalado:
 * **Node.js** (Versión 18 o 20 recomendada)
@@ -31,7 +22,7 @@ Antes de empezar, asegúrate de tener instalado:
 
 ---
 
-## 1. 🗄️ Base de Datos (PostgreSQL)
+## 1. Base de Datos (PostgreSQL)
 
 El backend de Spring Boot está configurado para conectarse a PostgreSQL. Sigue estos pasos para prepararla:
 
@@ -47,7 +38,7 @@ El backend de Spring Boot está configurado para conectarse a PostgreSQL. Sigue 
 
 ---
 
-## 2. 🐍 Servidor de Inteligencia Artificial (Python)
+## 2.  Servidor de Inteligencia Artificial (Python)
 Ubicación: `mock-ai-server/`
 
 Este componente analiza en tiempo real los cuadros de video de la webcam (enviados por Angular en Base64) usando **MediaPipe** y retorna conteo de repeticiones, errores cometidos y retroalimentación interactiva.
@@ -80,7 +71,7 @@ Este componente analiza en tiempo real los cuadros de video de la webcam (enviad
 
 ---
 
-## 3. ☕ Backend (Spring Boot / Gradle)
+## 3.  Backend (Spring Boot / Gradle)
 Ubicación: `backend/`
 
 Gestiona los servicios de negocio, autenticación JWT, registro de usuarios y registro de sesiones de terapia.
@@ -112,7 +103,7 @@ Gestiona los servicios de negocio, autenticación JWT, registro de usuarios y re
 
 ---
 
-## 4. 💻 Frontend (Angular)
+## 4.  Frontend (Angular)
 Ubicación: `fisio-frontend/`
 
 Interfaz de usuario web interactiva que solicita permisos de cámara web, envía frames al servidor de IA vía WebSockets y consume los servicios REST del backend de Spring Boot.
@@ -136,11 +127,11 @@ Interfaz de usuario web interactiva que solicita permisos de cámara web, envía
    ```
    *(O alternativamente: `ng serve`)*
 5. Abre en tu navegador favorito:
-   👉 **`http://localhost:4200`**
+    **`http://localhost:4200`**
 
 ---
 
-## 🔑 Credenciales de Acceso por Defecto
+##  Credenciales de Acceso por Defecto
 
 Al iniciar el Backend de Spring Boot, se crearán automáticamente los siguientes usuarios de prueba en tu base de datos (definidos en [BackendApplication.java](file:///c:/Users/alejo/OneDrive/Desktop/UNIBE%20EJERCICIOS/ALGREBRA%20LINEAL/fisioterapia/backend/fisioterapia-backend-services/src/main/java/com/fisio/backend/BackendApplication.java)):
 
