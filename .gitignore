@@ -83,6 +83,9 @@ ENV/
 venv.bak/
 ENV.bak/
 .venv/
+.venv*/
+**/.venv*/
+*.venv*
 
 # ------------------------------------------
 # Configuration and Environment Secrets

@@ -31,4 +31,8 @@ public class UsuarioService {
     public Optional<Usuario> buscarPorId(Long id) {
         return usuarioRepository.findById(id);
     }
+
+    public java.util.List<Usuario> listarPacientes() {
+        return usuarioRepository.findByRol("PACIENTE");
+    }
 }

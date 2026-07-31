@@ -22,8 +22,8 @@
     <div class="dashboard-grid-top">
       <div class="welcome-card">
         <h2>Hola, {{ currentUser?.nombre }}</h2>
-        <p *ngIf="!isDoctor">Bienvenido a tu portal de recuperación. Selecciona una acción para continuar.</p>
-        <p *ngIf="isDoctor">Portal del especialista médico. Supervise el avance de sus pacientes y gestione la base de ejercicios.</p>
+        <p *ngIf="!isDoctor">Bienvenido a tu portal de recuperación. Consulta tus ejercicios asignados e inicia tu terapia.</p>
+        <p *ngIf="isDoctor">Portal del especialista médico. Registre pacientes, gestione tratamientos y supervise evoluciones clínicas.</p>
         
         <div class="action-buttons" *ngIf="!isDoctor">
           <a routerLink="/therapy" class="btn btn-primary">
@@ -75,6 +75,148 @@
       </div>
     </div>
 
+    <!-- Doctor Section: Create Patient & Exercise Assignment -->
+    <div class="doctor-sections-grid" *ngIf="isDoctor">
+      
+      <!-- Card 1: Create New Patient -->
+      <div class="card doctor-card">
+        <div class="card-header">
+          <h3><span class="material-icons title-icon">person_add</span> Registrar Nuevo Paciente</h3>
+          <span class="subtitle">Crear credenciales de acceso para un nuevo paciente</span>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="onCreatePatient()" class="patient-form" autocomplete="off">
+            <div class="form-group-sub">
+              <label><span class="material-icons field-icon">badge</span> Nombre Completo:</label>
+              <div class="input-with-icon">
+                <span class="material-icons input-icon">person</span>
+                <input type="text" [(ngModel)]="newPatientName" name="pName" placeholder="Ej. María López" autocomplete="off" required>
+              </div>
+            </div>
+            <div class="form-group-sub">
+              <label><span class="material-icons field-icon">mail_outline</span> Correo Electrónico:</label>
+              <div class="input-with-icon">
+                <span class="material-icons input-icon">email</span>
+                <input type="email" [(ngModel)]="newPatientEmail" name="pEmail" placeholder="maria@fisioterapia.com" autocomplete="new-password" required>
+              </div>
+            </div>
+            <div class="form-group-sub">
+              <label><span class="material-icons field-icon">lock_open</span> Contraseña de Acceso:</label>
+              <div class="input-with-icon">
+                <span class="material-icons input-icon">lock</span>
+                <input type="password" [(ngModel)]="newPatientPassword" name="pPassword" placeholder="••••••••••••" autocomplete="new-password" required>
+              </div>
+            </div>
+
+            <div class="alert alert-success" *ngIf="patientSuccessMsg">
+              <span class="material-icons">check_circle</span> {{ patientSuccessMsg }}
+            </div>
+            <div class="alert alert-danger" *ngIf="patientErrorMsg">
+              <span class="material-icons">error_outline</span> {{ patientErrorMsg }}
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-submit-patient" [disabled]="!newPatientName || !newPatientEmail || !newPatientPassword">
+              <span class="material-icons">person_add</span>
+              <span>Registrar Paciente</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Card 2: Exercise Assignment to Selected Patient -->
+      <div class="card doctor-card">
+        <div class="card-header">
+          <h3><span class="material-icons title-icon">assignment_ind</span> Asignar Ejercicios a: <span class="highlight-name">{{ selectedPatientName }}</span></h3>
+          <span class="subtitle">Prescribir ejercicios específicos con sus indicaciones de rutina</span>
+        </div>
+        <div class="card-body">
+          <!-- Form to assign exercise -->
+          <form (ngSubmit)="onAssignExercise()" class="assignment-form" autocomplete="off">
+            <div class="form-group-sub">
+              <label for="assign-ex-select"><span class="material-icons field-icon">fitness_center</span> Seleccionar Ejercicio a Asignar:</label>
+              <div class="input-with-icon">
+                <span class="material-icons input-icon">directions_run</span>
+                <select id="assign-ex-select" [(ngModel)]="selectedAssignExerciseId" name="assignExId" required>
+                  <option *ngFor="let ex of exercises" [value]="ex.id">{{ ex.nombre }} (Ángulo: {{ ex.anguloObjetivo }}°)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group-sub">
+              <label><span class="material-icons field-icon">edit_note</span> Indicaciones Médicas / Rutina:</label>
+              <div class="input-with-icon">
+                <span class="material-icons input-icon">assignment</span>
+                <input type="text" [(ngModel)]="assignIndicaciones" name="assignInd" placeholder="Ej. 3 series de 12 repeticiones dos veces al día" autocomplete="off" required>
+              </div>
+            </div>
+
+            <div class="alert alert-success" *ngIf="assignSuccessMsg">
+              <span class="material-icons">check_circle</span> {{ assignSuccessMsg }}
+            </div>
+            <div class="alert alert-danger" *ngIf="assignErrorMsg">
+              <span class="material-icons">error_outline</span> {{ assignErrorMsg }}
+            </div>
+
+            <button type="submit" class="btn btn-secondary btn-submit-assign" [disabled]="!selectedPatientId || !selectedAssignExerciseId || !assignIndicaciones">
+              <span class="material-icons">post_add</span>
+              <span>Asignar Ejercicio</span>
+            </button>
+          </form>
+
+          <!-- List of currently assigned exercises for selected patient -->
+          <div class="assigned-list-container">
+            <h4>Ejercicios Asignados Actualmente:</h4>
+            <div class="assigned-items">
+              <div class="assigned-item" *ngFor="let asig of assignedExercises">
+                <div class="assigned-info">
+                  <span class="assigned-name">{{ asig.ejercicio.nombre }}</span>
+                  <p class="assigned-indicaciones"><span class="material-icons text-sm">notes</span> {{ asig.indicaciones || 'Sin indicaciones adicionales' }}</p>
+                  <span class="assigned-date">Asignado el {{ asig.fechaAsignacion | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <button class="delete-asig-btn" (click)="onDeleteAssignment(asig.id)" title="Quitar asignación">
+                  <span class="material-icons">delete_outline</span>
+                </button>
+              </div>
+
+              <div class="no-assigned" *ngIf="assignedExercises.length === 0">
+                <p>Este paciente aún no tiene ejercicios asignados.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Patient Section: Prescribed Exercises Overview -->
+    <div class="card assigned-patient-card" *ngIf="!isDoctor">
+      <div class="card-header">
+        <h3><span class="material-icons title-icon">fitness_center</span> Tus Ejercicios Prescritos por el Médico</h3>
+        <span class="subtitle">Rutinas e indicaciones asignadas especialmente para tu tratamiento</span>
+      </div>
+      <div class="card-body">
+        <div class="patient-assigned-grid" *ngIf="assignedExercises.length > 0">
+          <div class="patient-assigned-card" *ngFor="let asig of assignedExercises">
+            <div class="card-badge">Prescrito</div>
+            <h4>{{ asig.ejercicio.nombre }}</h4>
+            <p class="desc">{{ asig.ejercicio.descripcion }}</p>
+            <div class="indicaciones-box">
+              <span class="material-icons">assignment</span>
+              <span><strong>Indicaciones:</strong> {{ asig.indicaciones }}</span>
+            </div>
+            <a routerLink="/therapy" class="btn btn-primary start-btn">
+              <span class="material-icons">play_arrow</span>
+              <span>Iniciar este ejercicio</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="no-assigned-patient" *ngIf="assignedExercises.length === 0">
+          <span class="material-icons large-icon">info</span>
+          <p>No tienes ejercicios específicos asignados por tu médico aún. Puedes seleccionar cualquier ejercicio del catálogo general para practicar.</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Middle Panel: Charts & Exercises -->
     <div class="dashboard-grid-middle">
       
@@ -95,7 +237,7 @@
       <!-- Exercise List & New Exercise form -->
       <div class="card exercises-card">
         <div class="card-header">
-          <h3>Catálogo de Ejercicios</h3>
+          <h3>Catálogo General de Ejercicios</h3>
           <span class="subtitle">Ejercicios disponibles en la plataforma</span>
         </div>
         <div class="card-body exercises-list">

@@ -20,13 +20,25 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   // Business Data
   sessions: any[] = [];
   exercises: any[] = [];
+  assignedExercises: any[] = [];
   
-  // Patients list (for Doctor monitoring)
-  patientsList: any[] = [
-    { id: 1, nombre: 'Juan Perez', correo: 'paciente@fisioterapia.com' }
-  ];
-  selectedPatientId = 1;
-  selectedPatientName = 'Juan Perez';
+  // Patients list (Dynamic from API)
+  patientsList: any[] = [];
+  selectedPatientId: number | null = null;
+  selectedPatientName = '';
+
+  // New Patient Form (Doctor only)
+  newPatientName = '';
+  newPatientEmail = '';
+  newPatientPassword = '';
+  patientSuccessMsg = '';
+  patientErrorMsg = '';
+
+  // Assign Exercise Form (Doctor only)
+  selectedAssignExerciseId: number | null = null;
+  assignIndicaciones = '';
+  assignSuccessMsg = '';
+  assignErrorMsg = '';
 
   // New Exercise Form (Doctor only)
   newExerciseName = '';
@@ -59,9 +71,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.loadExercises();
     
     if (this.isDoctor) {
-      this.loadPatientHistory(this.selectedPatientId);
+      this.loadPatients();
     } else {
       this.loadPatientHistory(this.currentUser.id);
+      this.loadAssignedExercises(this.currentUser.id);
     }
   }
 
@@ -73,8 +86,26 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.apiService.getExercises().subscribe({
       next: (data) => {
         this.exercises = data;
+        if (data.length > 0) {
+          this.selectedAssignExerciseId = data[0].id;
+        }
       },
       error: (err) => console.error('Error loading exercises', err)
+    });
+  }
+
+  loadPatients(): void {
+    this.apiService.getPatients().subscribe({
+      next: (data) => {
+        this.patientsList = data;
+        if (data.length > 0) {
+          this.selectedPatientId = data[0].id;
+          this.selectedPatientName = data[0].nombre;
+          this.loadPatientHistory(data[0].id);
+          this.loadAssignedExercises(data[0].id);
+        }
+      },
+      error: (err) => console.error('Error loading patients list', err)
     });
   }
 
@@ -83,6 +114,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     if (selected) {
       this.selectedPatientName = selected.nombre;
       this.loadPatientHistory(selected.id);
+      this.loadAssignedExercises(selected.id);
     }
   }
 
@@ -91,9 +123,18 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       next: (data) => {
         this.sessions = data;
         this.calculateStats();
-        setTimeout(() => this.buildChart(), 150); // Small delay to let DOM render canvas
+        setTimeout(() => this.buildChart(), 150);
       },
       error: (err) => console.error('Error loading patient history', err)
+    });
+  }
+
+  loadAssignedExercises(patientId: number): void {
+    this.apiService.getAssignedExercises(patientId).subscribe({
+      next: (data) => {
+        this.assignedExercises = data;
+      },
+      error: (err) => console.error('Error loading assigned exercises', err)
     });
   }
 
@@ -161,6 +202,72 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           }
         }
       }
+    });
+  }
+
+  onCreatePatient(): void {
+    if (!this.newPatientName || !this.newPatientEmail || !this.newPatientPassword) return;
+
+    this.patientSuccessMsg = '';
+    this.patientErrorMsg = '';
+
+    const payload = {
+      nombre: this.newPatientName,
+      correo: this.newPatientEmail,
+      password: this.newPatientPassword,
+      rol: 'PACIENTE'
+    };
+
+    this.apiService.createPatient(payload).subscribe({
+      next: (data) => {
+        this.patientSuccessMsg = '¡Paciente creado exitosamente!';
+        this.newPatientName = '';
+        this.newPatientEmail = '';
+        this.newPatientPassword = '';
+        this.loadPatients();
+        setTimeout(() => this.patientSuccessMsg = '', 3000);
+      },
+      error: (err) => {
+        console.error('Error creating patient', err);
+        this.patientErrorMsg = err.error?.error || 'Error al crear el paciente.';
+      }
+    });
+  }
+
+  onAssignExercise(): void {
+    if (!this.selectedPatientId || !this.selectedAssignExerciseId) return;
+
+    this.assignSuccessMsg = '';
+    this.assignErrorMsg = '';
+
+    const payload = {
+      pacienteId: Number(this.selectedPatientId),
+      ejercicioId: Number(this.selectedAssignExerciseId),
+      indicaciones: this.assignIndicaciones || 'Realizar rutina prescrita por el especialista.'
+    };
+
+    this.apiService.assignExercise(payload).subscribe({
+      next: () => {
+        this.assignSuccessMsg = '¡Ejercicio asignado con éxito!';
+        this.assignIndicaciones = '';
+        this.loadAssignedExercises(Number(this.selectedPatientId));
+        setTimeout(() => this.assignSuccessMsg = '', 3000);
+      },
+      error: (err) => {
+        console.error('Error assigning exercise', err);
+        this.assignErrorMsg = 'Error al asignar el ejercicio al paciente.';
+      }
+    });
+  }
+
+  onDeleteAssignment(assignmentId: number): void {
+    this.apiService.deleteAssignment(assignmentId).subscribe({
+      next: () => {
+        if (this.selectedPatientId) {
+          this.loadAssignedExercises(Number(this.selectedPatientId));
+        }
+      },
+      error: (err) => console.error('Error deleting assignment', err)
     });
   }
 

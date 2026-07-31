@@ -6,9 +6,9 @@ import cv2
 import numpy as np
 import mediapipe as mp
 import websockets
-from mediapipe.python.solutions import pose as mp_pose
-from mediapipe.python.solutions import hands as mp_hands
-from mediapipe.python.solutions import drawing_utils as mp_drawing
+mp_pose = mp.solutions.pose
+mp_hands = mp.solutions.hands
+mp_drawing = mp.solutions.drawing_utils
 
 # Calculate distance between 2D points
 def calculate_distance(p1, p2):
